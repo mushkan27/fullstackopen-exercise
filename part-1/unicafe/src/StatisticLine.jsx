@@ -1,0 +1,18 @@
+
+import React from "react";
+
+
+
+const StatisticLine = ({text, value}) => {
+  return (
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
+  //  <div>
+  //   <p>{text} : {value}</p>
+  // </div>
+  );
+};
+
+export default StatisticLine;
