@@ -8,8 +8,18 @@ const App = (props) => {
   // console.log(persons)
   const [newName, setNewName] = useState('')
 
+   
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    //filter same name
+    const filterd = persons.filter((person)=>person.name === newName);
+    if(filterd.length > 0){
+      alert(`${newName} is already added to phonebook`);
+      return; // this will prevent adding the name 
+    }
+
     setPersons(persons.concat({
       name: newName
     }))
