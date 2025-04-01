@@ -7,6 +7,7 @@ const App = (props) => {
   const [persons, setPersons] = useState(props.phoneBook) 
   // console.log(persons)
   const [newName, setNewName] = useState('')
+  const [num, setNum] = useState('')
 
    
 
@@ -21,25 +22,27 @@ const App = (props) => {
     }
 
     setPersons(persons.concat({
-      name: newName
+      name: newName,
+      num: num
     }))
     setNewName("")
+    setNum("")
   }
 
   const handleChange = (event) => {
     setNewName(event.target.value)
+  }
+  const handleNum = (event)=> {
+    setNum(event.target.value)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
       <form onSubmit={handleSubmit} >
-        <div>
-          name: <input value={newName} onChange={handleChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
+        <div>name: <input value={newName} onChange={handleChange} /></div>
+        <div>number: <input value={num} onChange={handleNum} /></div>
+        <div> <button type="submit">add</button> </div>
       </form>
       
       <h2>Numbers</h2>

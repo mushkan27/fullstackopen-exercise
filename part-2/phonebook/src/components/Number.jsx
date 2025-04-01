@@ -4,7 +4,7 @@ const Number = ({value}) => {
     return (
     
        
-       <p>{value.name}</p>
+       <p>{value.name} {value.num}</p>
         
     )
 }
