@@ -1,9 +1,9 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
+      "name": "Arto Hellas'",
       "number": "040-123456",
-      "id": "1"
+      "id": 1
     },
     {
       "name": "Ada Lovelace",
@@ -21,14 +21,9 @@
       "id": "4"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Muskan Lama",
-      "number": "123456789"
-    },
-    {
-      "id": 6,
-      "name": "Raju Lama",
-      "number": "345678910"
+      "number": "0987654321"
     }
   ]
 }
