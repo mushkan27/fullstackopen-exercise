@@ -3,6 +3,7 @@ import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import axios from "axios"
+import personServices from './services/personServices'
 
 
 
@@ -14,9 +15,9 @@ const App = (props) => {
   const [search, setSearch] = useState('')
 
   useEffect(()=>{
-    let myAxiosPromise = axios.get('http://localhost:3001/persons')
-    myAxiosPromise.then((myResult)=>{
-      setPersons(myResult.data)
+    let myAxiosPromise = personServices.getAll()
+    .then((myData)=>{
+      setPersons(myData)
     })
   },[])
 
@@ -32,17 +33,20 @@ const App = (props) => {
       alert(`${newName} is already added to phonebook`);
       return; // this will prevent adding the name 
     }
-
-    
-
-    setPersons(persons.concat({
+    let newContact = {
       name: newName,
       number: num,
       id: persons.length + 1
-    }))
-    setNewName("")
-    setNum("")
-  }
+    }
+
+    //2.12: axios.post to update data in the server as well
+    let postPromise = personServices.create(newContact)
+    .then((result)=>{
+      setPersons(persons.concat(result.data));
+      setNewName("");
+      setNum('');
+    })
+  } //handleSubmit ends here
 
   const handleChange = (event) => {
     setNewName(event.target.value)
