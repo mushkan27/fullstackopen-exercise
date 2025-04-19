@@ -3,7 +3,7 @@
     {
       "name": "Arto Hellas'",
       "number": "040-123456",
-      "id": 1
+      "id": "1"
     },
     {
       "name": "Ada Lovelace",
@@ -24,6 +24,16 @@
       "id": "5",
       "name": "Muskan Lama",
       "number": "0987654321"
+    },
+    {
+      "id": "6",
+      "name": "Raju Lama",
+      "number": "123456789"
+    },
+    {
+      "id": 7,
+      "name": "Jagriti Jha",
+      "number": "2345167"
     }
   ]
 }

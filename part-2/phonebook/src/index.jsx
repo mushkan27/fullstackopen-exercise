@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import "./index.css"
 
 let phoneBook = [
     { name: 'Arto Hellas', number: '040-123456', id: 1 },

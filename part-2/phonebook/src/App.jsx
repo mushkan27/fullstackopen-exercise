@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import axios from "axios"
 import personServices from './services/personServices'
-
+import Notification from './components/Notification'
 
 
 const App = (props) => {
@@ -13,6 +12,7 @@ const App = (props) => {
   const [newName, setNewName] = useState('')
   const [num, setNum] = useState('')
   const [search, setSearch] = useState('')
+  const [notification, setNotification] = useState("")
 
   useEffect(()=>{
     let myAxiosPromise = personServices.getAll()
@@ -21,7 +21,6 @@ const App = (props) => {
     })
   },[])
 
-   
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -39,28 +38,38 @@ const App = (props) => {
           setPersons(persons.map(person=> person.id !== exists.id ? person:updatedPerson))
           setNewName('');
           setNum('');
+          setNotification(`Updated ${updatedPerson.name}'s number`)
+          setTimeout(() => setNotification(''), 5000)
         })
         .catch(error => {
-          console.error("Error updating the person:", error);
+          // console.error("Error updating the person:", error);
+          if(error.response.status === 404){
+            setNotification(`Information of ${newName} has already been removed from the server`)
+            setTimeout(()=>setNotification(''),5000);
+            setPersons(persons.filter(person=>person.id !== exists.id))
+          }
         });
       }
     } else{
     let newContact = {
       name: newName,
       number: num,
-      id: persons.length + 1
+      id: persons.length +1
     }
 
     //2.12: axios.post to update data in the server as well
     let postPromise = personServices.create(newContact)
-    .then((result)=>{
+    .then((newPerson)=>{
       setNewName("");
       setNum('');
-      setPersons(persons.concat(result.data));
-      
+      setPersons(persons.concat(newPerson));
+      setNotification(`Added ${newPerson.name}`)
+      setTimeout(() => setNotification(''), 5000)
     })
     .catch(error => {
-      console.error("Error adding the new person:", error);
+      // console.error("Error adding the new person:", error);
+      setNotification(`Error: Could not add ${newName}`);
+      setTimeout(() => setNotification(''), 5000);
     });
   }
   } //handleSubmit ends here
@@ -80,22 +89,31 @@ const App = (props) => {
   )
 
   //2.14 Delete entries from the phonebook using handleDelete
-  const handleDelete = (id, name)=> {
+  const handleDelete = (id, name) => {
     const confirmation = window.confirm(`Delete ${name}?`)
-   
-    if(confirmation){
-      personServices.remove(id).then(()=>{
-        setPersons(persons.filter(person=>person.id !== id))
-      }).catch(`${name} was already removed from server`)
-      setPersons(persons.filter(person=>person.id !== id))
+    
+    if (confirmation) {
+      personServices.remove(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+          setNotification(`${name} was deleted successfully`)
+          setTimeout(() => setNotification(''), 5000)
+        })
+        .catch(error => {
+          console.error(error)
+          setNotification(`${name} was removed from server`)
+          setTimeout(() => setNotification(''), 5000)
+          setPersons(persons.filter(person => person.id !== id)) // remove from UI even if server delete failed
+        })
     }
   }
+  
 
   return (
     <div>
       <h2>Phonebook</h2>
-      
       <form onSubmit={handleSubmit} >
+      <Notification message={notification} />
       <Filter search={search} handleSearch={handleSearch} />
 
         <h2>Add a new</h2>
@@ -113,4 +131,3 @@ const App = (props) => {
 }
 
 export default App
-
