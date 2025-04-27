@@ -3,8 +3,7 @@
 //When only one country matches the search, your API result looks like an array containing one object.
 //So to show the details of that one country, you need to access the first item in the array → that's at index 0.
 
-const CountryDetail = ({ countries }) => {
-    const country = countries[0];
+const CountryDetail = ({ country }) => {
     
     const languages = country.languages ? Object.values(country.languages) : [];
   

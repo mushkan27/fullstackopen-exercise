@@ -8,6 +8,7 @@ const App = () => {
 
   const [countries, setCountries] = useState([]);
   const [searchItem, setSearchItem] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(()=>{
     if(searchItem.trim()===""){
@@ -22,7 +23,7 @@ const App = () => {
         setCountries(response.data);
         
       } catch (error) {
-        console.log("Error fetching data:", error.data)
+        console.log("Error fetching data:", error)
       }
     }
     fetchCountry();
@@ -33,24 +34,34 @@ const App = () => {
 
   const handleSearch = (e) => {
     setSearchItem(e.target.value);
+    setSelectedCountry(null);
+  }
+
+  const handleShow = (country)=>{
+    setSelectedCountry(country)
   }
 
 
   return (
     <>
   <SearchBar searchItem={searchItem} handleSearch={handleSearch}/>
-
+  {selectedCountry? (
+    <CountryDetail country={selectedCountry}/>
+  ): (
+    <>
   {countries.length > 10 && (
     <p>Too many matches, specify another filter</p>
   )}
 
   {countries.length <= 10 && countries.length >1 && (
-    <CountryList countries={countries} />
+    <CountryList countries={countries} handleShow={handleShow} />
   )}
 
   {countries.length === 1 && (
-    <CountryDetail countries={countries} />
+    <CountryDetail country={countries[0]}  />
   )}
+  </>
+)}
   </>
   )
 };
