@@ -49,7 +49,11 @@ app.get("/api/persons",(request, response) => {
     }
   })
 
-  
+  app.delete("/api/persons/:id", (request, response)=>{
+    const myId = Number(request.params.id);
+    persons = persons.filter((person)=>person.id !== myId)
+    response.status(204).send(`The note at id ${myId} has been deleted`)
+  })
 
 
 const PORT = 3001
