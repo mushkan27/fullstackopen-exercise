@@ -3,8 +3,22 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 
-app.use(morgan('tiny'))
 app.use(express.json()); 
+// app.use(morgan('tiny'))
+
+//Defining a custom token for morgan to log the request body for POST request
+morgan.token("req-body", (req)=>{
+  if(req.method === "POST"){
+    return JSON.stringify(req.body)
+  }
+  return "";
+})
+
+//Middleware for logging with custom format
+app.use(morgan(
+  ":method :url :status :res[content-length] - :response-time ms :req-body"
+))
+
 
 let persons = [
     { 
