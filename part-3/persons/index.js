@@ -2,7 +2,7 @@
 const express = require('express')
 const app = express()
 
-// app.use(express.json()); 
+app.use(express.json()); 
 
 let persons = [
     { 
@@ -53,6 +53,18 @@ app.get("/api/persons",(request, response) => {
     const myId = Number(request.params.id);
     persons = persons.filter((person)=>person.id !== myId)
     response.status(204).send(`The note at id ${myId} has been deleted`)
+  })
+
+  app.post("/api/persons",(request, response)=>{
+    const myNewPost = request.body;
+    myNewPost.id = Math.floor(Math.random() * 10000)
+
+    if(!myNewPost.name || !myNewPost.number){
+      response.status(400).send({error: "name or number is missing."})
+    }
+
+    persons.push(myNewPost)
+    response.status(201).json(myNewPost)
   })
 
 
