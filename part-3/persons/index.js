@@ -2,9 +2,11 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
 
 app.use(express.json()); 
 // app.use(morgan('tiny'))
+app.use(cors()) //Enable CORS for all routes
 
 //Defining a custom token for morgan to log the request body for POST request
 morgan.token("req-body", (req)=>{
@@ -64,6 +66,7 @@ app.get("/api/persons",(request, response) => {
       response.status(404).send(`There are no persons at ${myId}`)
     }
   })
+
 
   app.delete("/api/persons/:id", (request, response)=>{
     const myId = Number(request.params.id);
