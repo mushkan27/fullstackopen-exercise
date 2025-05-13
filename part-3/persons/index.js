@@ -7,6 +7,7 @@ const cors = require('cors')
 app.use(express.json()); 
 // app.use(morgan('tiny'))
 app.use(cors()) //Enable CORS for all routes
+app.use(express.static('dist')) //Serve static files from the build directory
 
 //Defining a custom token for morgan to log the request body for POST request
 morgan.token("req-body", (req)=>{
@@ -45,9 +46,9 @@ let persons = [
     }
 ]
 
-app.get("/",(request, response) => {
-    response.send("<h1>Hello World</h1>")
-  })
+// app.get("/",(request, response) => {
+//     response.send("<h1>Hello World</h1>")
+//   })
 
 app.get("/api/persons",(request, response) => {
     response.json(persons)
@@ -87,6 +88,6 @@ app.get("/api/persons",(request, response) => {
   })
 
 
-const PORT = 3001
+const PORT = process.env.PORT ? process.env.PORT : 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
