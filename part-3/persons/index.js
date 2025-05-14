@@ -6,7 +6,11 @@ const cors = require('cors')
 
 app.use(express.json()); 
 // app.use(morgan('tiny'))
-app.use(cors()) //Enable CORS for all routes
+app.use(cors(
+  {
+    origin: "https://persons-contact.onrender.com"
+  }
+)) //Enable CORS for all routes
 app.use(express.static('dist')) //Serve static files from the build directory
 
 //Defining a custom token for morgan to log the request body for POST request
