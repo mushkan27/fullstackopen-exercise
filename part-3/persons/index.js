@@ -175,6 +175,27 @@ app.put('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+//Getting individual data with id
+  app.get('/api/persons/:id', (request, response, next) => {
+    Person.findById(request.params.id)
+      .then(person => {
+        if (person) {
+          response.json(person)
+        } else {
+          response.status(404).end()
+        }
+      })
+  
+      .catch(error => next(error))
+  })
+
+  app.get("/info", (request, response, next)=>{
+    Person.find().then(personEntry=>{
+      response.send(`Phonebook has info for ${personEntry.length} people. <Br /> ${Date()}`)
+    }).catch(e=>next(e))
+  })
+
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
