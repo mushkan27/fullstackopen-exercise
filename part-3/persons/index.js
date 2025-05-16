@@ -122,16 +122,23 @@ app.use(morgan(
 let persons = [];
 app.get("/api/persons", (request, response)=>{
   Person.find({}).then((result)=>{
-    response.json(result)
+    if(result){
+      response.json(result)
+    }else{
+      request.status(404).end()
+    }
+  }).catch((e)=>{
+    console.log(error)
+    response.status(500).end()
   })
 })
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  // if (!body.name) {
-  //   return response.status(400).json({ error: 'name missing' })
-  // }
+  if (!body.name) {
+    return response.status(400).json({ error: 'name missing' })
+  }
 
   const person = new Person({
     name: body.name,
@@ -141,8 +148,22 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
+  .catch((e)=>{
+    console.log(error)
+    response.status(500).json({error: "failed to save person"})
+  })
 })
 
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch((e)=>{
+      console.log(error)
+      response.status(500).end({error: "malformatted id"})
+    })
+})
 
 const PORT = process.env.PORT ? process.env.PORT : 3001
 app.listen(PORT)
