@@ -1,5 +1,5 @@
 
-require('dotenv').config(); 
+require('dotenv').config()
 
 const express = require('express')
 const app = express()
@@ -7,16 +7,16 @@ const morgan = require('morgan')
 const cors = require('cors')
 const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI;
+const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery',false)
 
 mongoose.connect(url)
   .then(() => {
-    console.log("Connected to MongoDB")
+    console.log('Connected to MongoDB')
   })
   .catch((error) => {
-    console.error("Error connecting to MongoDB:", error.message)
+    console.error('Error connecting to MongoDB:', error.message)
   })
 
 const personSchema = new mongoose.Schema({
@@ -32,7 +32,7 @@ const personSchema = new mongoose.Schema({
       validator: function(v){
         return /^\d{2,3}-\d+$/.test(v) && v.length >=8
       },
-      message: (props)=>`${props.value} is not a valid phone number`
+      message: (props) => `${props.value} is not a valid phone number`
     }
   },
 })
@@ -48,44 +48,44 @@ personSchema.set('toJSON', {
 const Person = mongoose.model('Person', personSchema)
 
 
-app.use(express.json()); 
+app.use(express.json())
 // app.use(morgan('tiny'))
 app.use(cors()) //Enable CORS for all routes
 app.use(express.static('dist')) //Serve static files from the build directory
 
 //Defining a custom token for morgan to log the request body for POST request
-morgan.token("req-body", (req)=>{
-  if(req.method === "POST"){
+morgan.token('req-body', (req) => {
+  if(req.method === 'POST'){
     return JSON.stringify(req.body)
   }
-  return "";
+  return ''
 })
 
 //Middleware for logging with custom format
 app.use(morgan(
-  ":method :url :status :res[content-length] - :response-time ms :req-body"
+  ':method :url :status :res[content-length] - :response-time ms :req-body'
 ))
 
 
 // let persons = [
-//     { 
+//     {
 //       "id": 1,
-//       "name": "Arto Hellas", 
+//       "name": "Arto Hellas",
 //       "number": "040-123456"
 //     },
-//     { 
+//     {
 //       "id": 2,
-//       "name": "Ada Lovelace", 
+//       "name": "Ada Lovelace",
 //       "number": "39-44-5323523"
 //     },
-//     { 
+//     {
 //       "id": 3,
-//       "name": "Dan Abramov", 
+//       "name": "Dan Abramov",
 //       "number": "12-43-234345"
 //     },
-//     { 
+//     {
 //       "id": 4,
-//       "name": "Mary Poppendieck", 
+//       "name": "Mary Poppendieck",
 //       "number": "39-23-6423122"
 //     }
 // ]
@@ -132,15 +132,15 @@ app.use(morgan(
 //     response.status(201).json(myNewPost)
 //   })
 
-let persons = [];
-app.get("/api/persons", (request, response, next)=>{
-  Person.find({}).then((result)=>{
+// let persons = []
+app.get('/api/persons', (request, response, next) => {
+  Person.find({}).then((result) => {
     if(result){
       response.json(result)
     }else{
       request.status(404).end()
     }
-  }).catch((e)=>next(e))
+  }).catch((e) => next(e))
 })
 
 app.post('/api/persons', (request, response, next) => {
@@ -158,21 +158,21 @@ app.post('/api/persons', (request, response, next) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
-  .catch((e)=>next(e))
+    .catch((e) => next(e))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
-    .catch((e)=>next(e))
+    .catch((e) => next(e))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
 
-  Person.findByIdAndUpdate(request.params.id, {name, number}, {new:true, runValidators: true, context: "query"})
+  Person.findByIdAndUpdate(request.params.id, { name, number }, { new:true, runValidators: true, context: 'query' })
     .then(person => {
       if (!person) {
         return response.status(404).end()
@@ -189,24 +189,24 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 //Getting individual data with id
-  app.get('/api/persons/:id', (request, response, next) => {
-    Person.findById(request.params.id)
-      .then(person => {
-        if (person) {
-          response.json(person)
-        } else {
-          response.status(404).end()
-        }
-      })
-  
-      .catch(error => next(error))
-  })
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
 
-  app.get("/info", (request, response, next)=>{
-    Person.find().then(personEntry=>{
-      response.send(`Phonebook has info for ${personEntry.length} people. <Br /> ${Date()}`)
-    }).catch(e=>next(e))
-  })
+    .catch(error => next(error))
+})
+
+app.get('/info', (request, response, next) => {
+  Person.find().then(personEntry => {
+    response.send(`Phonebook has info for ${personEntry.length} people. <Br /> ${Date()}`)
+  }).catch(e => next(e))
+})
 
 
 const errorHandler = (error, request, response, next) => {
