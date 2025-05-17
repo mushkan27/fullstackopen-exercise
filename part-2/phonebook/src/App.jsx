@@ -57,6 +57,7 @@ const App = (props) => {
       id: persons.length +1
     }
 
+
     //2.12: axios.post to update data in the server as well
     let postPromise = personServices.create(newContact)
     .then((newPerson)=>{
@@ -68,8 +69,13 @@ const App = (props) => {
     })
     .catch(error => {
       // console.error("Error adding the new person:", error);
-      setNotification(`Error: Could not add ${newName}`);
-      setTimeout(() => setNotification(''), 5000);
+      // setNotification(`Error: Could not add ${newName}`);
+      // setTimeout(() => setNotification(''), 5000);
+     setNotification(`Error: ${error.response.data.error}`)
+setTimeout(() => {
+  setNotification('')
+}, 5000)
+
     });
   }
   } //handleSubmit ends here

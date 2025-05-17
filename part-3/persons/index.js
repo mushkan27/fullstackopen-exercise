@@ -20,7 +20,11 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
   number: String,
 })
 
@@ -159,7 +163,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
 
-  Person.findById(request.params.id)
+  Person.findByIdAndUpdate(request.params.id, {name, number}, {new:true, runValidators: true, context: "query"})
     .then(person => {
       if (!person) {
         return response.status(404).end()
@@ -201,7 +205,9 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
 
   next(error)
 }
