@@ -222,7 +222,8 @@ const errorHandler = (error, request, response, next) => {
 }
 
 app.use(errorHandler)
-
+process.env.MY='Muskan'
 const PORT = process.env.PORT ? process.env.PORT : 3001
+console.log(process.env)
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
