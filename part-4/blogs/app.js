@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 const { mongoUrl } = require('./utils/config')
 const { info } = require('./utils/logger')
 const blogRouter = require('./controllers/blogs')
+const { errorHandler,noCodeHandler } = require('./utils/middleware')
 
 mongoose.connect(mongoUrl)
   .then(() => {
@@ -21,5 +22,7 @@ mongoose.connect(mongoUrl)
 app.use(express.json())
 
 app.use('/api/blogs', blogRouter)
+app.use(noCodeHandler)
+app.use(errorHandler)
 
 module.exports = app
