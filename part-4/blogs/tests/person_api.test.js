@@ -42,6 +42,19 @@ test('all blogs are returned', async () => {
 
   assert.strictEqual(response.body.length, initialBlogs.length)
 })
+
+test('unique identifier property of the blog posts is named id', async () => {
+  const response = await api.get('/api/blogs')
+
+  response.body.forEach(blog => {
+    // Check if blog has 'id' defined
+    assert.ok(blog.id, 'Blog post does not have an id property')
+
+    // Check if blog does NOT have '_id' property
+    assert.strictEqual(blog._id, undefined, 'Blog post still has _id property')
+  })
+})
+
 })
 
 after(async () => {
