@@ -3,12 +3,15 @@ const Blog = require('../models/blog')
 
 
 
-blogRouter.get('/', (request, response) => {
-    Blog.find({}).then((blogs) => {
-      response.json(blogs)
-    }).catch(e => {
-        next(e)
-    })
+blogRouter.get('/', async(request, response) => {
+    // Blog.find({}).then((blogs) => {
+    //   response.json(blogs)
+    // }).catch(e => {
+    //     next(e)
+    // })
+    //using async-await
+    let result = await Blog.find({})
+    response.json(result)
   })
   
   blogRouter.post('/', (request, response) => {
