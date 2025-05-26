@@ -13,6 +13,11 @@ test('blogs are returned as json', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 })
+test('all notes are returned', async () => {
+  const response = await api.get('/api/notes')
+
+  assert.strictEqual(response.body.length, 2)
+})
 })
 
 after(async () => {
