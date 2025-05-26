@@ -81,6 +81,49 @@ describe('testing POST method', () => {
   
     assert(titles.includes(newBlog.title))
   })
+
+  test('if likes property is missing, it defaults to 0', async () => {
+    const newBlogWithoutLikes = {
+      title: 'Blog without likes',
+      author: 'No Likes Author',
+      url: 'http://nolikes.com'
+    }
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlogWithoutLikes)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.likes, 0)
+  })
+
+  test('blog without title is rejected with 400 Bad Request', async () => {
+    const newBlog = {
+      author: 'Missing Title',
+      url: 'http://missingtitle.com',
+      likes: 5
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
+
+  test('blog without url is rejected with 400 Bad Request', async () => {
+    const newBlog = {
+      title: 'Missing URL',
+      author: 'Missing URL Author',
+      likes: 5
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
+
 })
 
 after(async () => {

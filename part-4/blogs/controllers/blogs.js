@@ -25,14 +25,22 @@ blogRouter.get('/', async(request, response) => {
   // })
 
   blogRouter.post('/', async (request, response, next) => {
+    const { title, url, author, likes } = request.body
+  
+    if (!title || !url) {
+      return response.status(400).json({ error: 'title and url are required' })
+    }
+  
+    const blog = new Blog({ title, url, author, likes })
+  
     try {
-      const blog = new Blog(request.body)
       const savedBlog = await blog.save()
       response.status(201).json(savedBlog)
     } catch (error) {
-      next(error) // Forward the error to error-handling middleware
+      next(error)
     }
   })
+  
   
 
   module.exports = blogRouter
