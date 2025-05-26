@@ -5,12 +5,12 @@ const app = express()
 
 const mongoose = require('mongoose')
 
-const { mongoUrl } = require('./utils/config')
+const config = require('./utils/config')
 const { info } = require('./utils/logger')
 const blogRouter = require('./controllers/blogs')
 const { errorHandler,noCodeHandler } = require('./utils/middleware')
 
-mongoose.connect(mongoUrl)
+mongoose.connect(config.MONGODB_URI)
   .then(() => {
     info('✅ Connected to MongoDB')
   })
