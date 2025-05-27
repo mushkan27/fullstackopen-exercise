@@ -4,28 +4,17 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const helper = require('./blogs_helper')
+
 
 const api = supertest(app)
 
-const initialBlogs = [
-  {
-    title: "First blog",
-    author: "author 1",
-    url: 'http://test1.com',
-    likes: 1
-  },
-  {
-    title: "Second blog",
-    author: "author 2",
-    url: 'http://test2.com',
-    likes: 2
-  }
-]
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(initialBlogs[0])
+  let blogObject = new Blog(helper.initialBlogs[0])
   await blogObject.save()
-  blogObject = new Blog(initialBlogs[1])
+  blogObject = new Blog(helper.initialBlogs[1])
   await blogObject.save()
 })
 
@@ -40,7 +29,7 @@ test('blogs are returned as json', async () => {
 test('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
 
-  assert.strictEqual(response.body.length, initialBlogs.length)
+  assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
 test('unique identifier property of the blog posts is named id', async () => {
@@ -77,7 +66,7 @@ describe('testing POST method', () => {
   
     const titles = response.body.map(r => r.title)
   
-    assert.strictEqual(response.body.length, initialBlogs.length + 1)
+    assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
   
     assert(titles.includes(newBlog.title))
   })
@@ -125,6 +114,49 @@ describe('testing POST method', () => {
   })
 
 })
+
+//testing delete method
+describe('testing DELETE method', () => { 
+  test('a blog can be deleted', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    // Check that the number of blogs has decreased by 1
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+
+    // Check that the deleted blog is no longer in the database
+    const ids = blogsAtEnd.map(blog => blog.id)
+    assert.ok(!ids.includes(blogToDelete.id), 'Deleted blog still exists in the database')
+  })
+})
+
+describe('testing PUT method', () => {
+test('update the likes of a blog post', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+
+  const updatedLikes = { likes: 10 }
+
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedLikes)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(response.body.likes, 10)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const updatedBlog = blogsAtEnd.find(b => b.id === blogToUpdate.id)
+  assert.strictEqual(updatedBlog.likes, 10)
+})
+})
+
 
 after(async () => {
   await mongoose.connection.close()
