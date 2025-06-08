@@ -9,6 +9,8 @@ const config = require('./utils/config')
 const { info } = require('./utils/logger')
 const blogRouter = require('./controllers/blogs')
 const { errorHandler,noCodeHandler } = require('./utils/middleware')
+const usersController = require('./controllers/users')
+
 
 mongoose.connect(config.MONGODB_URI)
   .then(() => {
@@ -22,7 +24,11 @@ mongoose.connect(config.MONGODB_URI)
 app.use(express.json())
 
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', usersController)
+
+
 app.use(noCodeHandler)
+
 app.use(errorHandler)
 
 module.exports = app

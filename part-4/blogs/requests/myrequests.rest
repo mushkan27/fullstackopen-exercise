@@ -9,3 +9,12 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:3003/api/blogs
+###
+POST http://localhost:3003/api/users/
+content-type: application/json
+
+{
+    "username": "mluukkai",
+    "name": "Matti Luukkainen",
+    "password": "password345"
+}
