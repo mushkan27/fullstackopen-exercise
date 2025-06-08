@@ -1,6 +1,7 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 
 //get all blogs
@@ -10,49 +11,36 @@ blogRouter.get('/', async(request, response) => {
     response.json(result)
   })
 
-  //post a new blogs
-  blogRouter.post('/', async (request, response, next) => {
-    const { title, url, author, likes } = request.body
-
-    try{
-    if (!title || !url) {
-      return response.status(400).json({ error: 'title and url are required' })
-    }
-      const user = await User.findOne({})
-      if(!user){
-        return response.status(400).json({ error: 'No user found to assign as creator' })
-      }
-
-      const blog = new Blog({ title, url, author, 
-        likes: likes || 0,
-        user: user.id
-       })
-
-       const savedBlog = await blog.save()
-
-      // Add blog to user's blogs array and save user
-    user.blogs = user.blogs.concat(savedBlog.id)
-    await user.save()
+  // POST a new blog
 blogRouter.post('/', async (request, response, next) => {
-    const { title, url, author, likes } = request.body
+  const { title, url, author, likes } = request.body
 
-    try{
+  try {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+
     if (!title || !url) {
       return response.status(400).json({ error: 'title and url are required' })
     }
-      const user = await User.findOne({})
-      if(!user){
-        return response.status(400).json({ error: 'No user found to assign as creator' })
-      }
 
-      const blog = new Blog({ title, url, author, 
-        likes: likes || 0,
-        user: user.id
-       })
+    if (!user) {
+      return response.status(400).json({ error: 'No user found to assign as creator' })
+    }
 
-       const savedBlog = await blog.save()
+    const blog = new Blog({
+      title,
+      url,
+      author,
+      likes: likes || 0,
+      user: user.id
+    })
 
-      // Add blog to user's blogs array and save user
+    const savedBlog = await blog.save()
+
     user.blogs = user.blogs.concat(savedBlog.id)
     await user.save()
 
@@ -62,10 +50,7 @@ blogRouter.post('/', async (request, response, next) => {
     next(error)
   }
 })
-  } catch (error) {
-    next(error)
-  }
-})
+
   
   //delete a blog by id
   blogRouter.delete('/:id', async (request, response, next) => {

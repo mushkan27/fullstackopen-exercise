@@ -14,9 +14,10 @@ Content-Type: application/json
 ###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2ODQ1MjhjYTg1NDJmNjQ1MDdlNjA1ZmQiLCJpYXQiOjE3NDkzNjU0NDh9.Ppic9iPZU8Hv5V-qGyW3RMEVFH7OXfjA2EY6TlNr5Uk
 
 {
-  "title": "Clean Slate Blog",
+  "title": "Blog with token",
   "author": "mluukkai",
   "url": "http://example.com/blog1",
   "likes": 7

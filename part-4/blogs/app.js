@@ -8,7 +8,7 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const { info } = require('./utils/logger')
 const blogRouter = require('./controllers/blogs')
-const { errorHandler,noCodeHandler } = require('./utils/middleware')
+const { errorHandler,noCodeHandler, tokenExtractor } = require('./utils/middleware')
 const usersController = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 
@@ -32,5 +32,6 @@ app.use('/api/login', loginRouter)
 app.use(noCodeHandler)
 
 app.use(errorHandler)
+app.use(tokenExtractor)
 
 module.exports = app
