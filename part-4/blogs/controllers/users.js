@@ -9,6 +9,14 @@ app.post('/', async(request, response, next) => {
   if (!body.username || !body.password) {
     return response.status(400).json({ error: 'username or password missing' })
   }
+  
+  if (body.username.length < 3) {
+    return response.status(400).json({ error: 'username must be at least 3 characters long' });
+  }
+
+  if (body.password.length < 3) {
+    return response.status(400).json({ error: 'password must be at least 3 characters long' });
+  }
 
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(body.password, saltRounds)
@@ -22,6 +30,9 @@ app.post('/', async(request, response, next) => {
     const savedUser = await user.save()
     response.status(201).json(savedUser)
   }catch(e){
+    if (e.name === 'MongoServerError' && e.code === 11000) {
+      return response.status(400).json({ error: 'username must be unique' })
+    }
     next(e)
   }
 })
