@@ -52,15 +52,35 @@ blogRouter.post('/', async (request, response, next) => {
 })
 
   
-  //delete a blog by id
+  //delete a blog by user who added it only
   blogRouter.delete('/:id', async (request, response, next) => {
     try {
-      await Blog.findByIdAndDelete(request.params.id)
+      // Verify and decode the token
+      const decodedToken = jwt.verify(request.token, process.env.SECRET)
+      if (!decodedToken.id) {
+        return response.status(401).json({ error: 'token invalid' })
+      }
+  
+      // Find the blog to be deleted
+      const blog = await Blog.findById(request.params.id)
+      if (!blog) {
+        return response.status(404).json({ error: 'blog not found' })
+      }
+  
+      // Check if the blog's creator matches the user from the token
+      if (blog.user.toString() !== decodedToken.id.toString()) {
+        return response.status(403).json({ error: 'unauthorized: only the creator can delete this blog' })
+      }
+  
+      // Delete blog if authorization is valid
+      await blog.deleteOne()
       response.status(204).end()
+  
     } catch (error) {
       next(error)
     }
   })
+  
 
   // UPDATE a blog by id (primarily updating likes)
 blogRouter.put('/:id', async (request, response, next) => {
