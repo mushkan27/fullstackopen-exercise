@@ -1,20 +1,28 @@
-POST http://localhost:3003/api/blogs/
+
+DELETE http://localhost:3003/api/blogs/68451960a6e395e221fa2b0c
+###
+DELETE http://localhost:3003/api/blogs/68451960a6e395e221fa2b0e
+###
+POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-  "title": "My first blog",
-  "author": "Alice",
-  "url": "https://example.com",
-  "likes": 5
+  "username": "mluukkai",
+  "name": "Matti Luukkainen",
+  "password": "password123"
+}
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Clean Slate Blog",
+  "author": "mluukkai",
+  "url": "http://example.com/blog1",
+  "likes": 7
 }
 ###
 GET http://localhost:3003/api/blogs
 ###
-POST http://localhost:3003/api/users/
-content-type: application/json
+GET http://localhost:3003/api/users
 
-{
-    "username": "mluukkai",
-    "name": "Matti Luukkainen",
-    "password": "password345"
-}

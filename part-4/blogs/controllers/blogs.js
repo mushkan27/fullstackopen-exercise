@@ -1,46 +1,71 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 
 //get all blogs
 blogRouter.get('/', async(request, response) => {
-    // Blog.find({}).then((blogs) => {
-    //   response.json(blogs)
-    // }).catch(e => {
-    //     next(e)
-    // })
     //using async-await
-    let result = await Blog.find({})
+    let result = await Blog.find({}).populate('user', {username:1, name:1})
     response.json(result)
   })
-  
-  // blogRouter.post('/', (request, response) => {
-  //   const blog = new Blog(request.body)
-  
-  //   blog.save().then((result) => {
-  //     response.status(201).json(result)
-  //   }).catch(e => {
-  //       next(e)
-  //   })
-  // })
 
   //post a new blogs
   blogRouter.post('/', async (request, response, next) => {
     const { title, url, author, likes } = request.body
-  
+
+    try{
     if (!title || !url) {
       return response.status(400).json({ error: 'title and url are required' })
     }
-  
-    const blog = new Blog({ title, url, author, likes })
-  
-    try {
-      const savedBlog = await blog.save()
-      response.status(201).json(savedBlog)
-    } catch (error) {
-      next(error)
+      const user = await User.findOne({})
+      if(!user){
+        return response.status(400).json({ error: 'No user found to assign as creator' })
+      }
+
+      const blog = new Blog({ title, url, author, 
+        likes: likes || 0,
+        user: user.id
+       })
+
+       const savedBlog = await blog.save()
+
+      // Add blog to user's blogs array and save user
+    user.blogs = user.blogs.concat(savedBlog.id)
+    await user.save()
+blogRouter.post('/', async (request, response, next) => {
+    const { title, url, author, likes } = request.body
+
+    try{
+    if (!title || !url) {
+      return response.status(400).json({ error: 'title and url are required' })
     }
-  })
+      const user = await User.findOne({})
+      if(!user){
+        return response.status(400).json({ error: 'No user found to assign as creator' })
+      }
+
+      const blog = new Blog({ title, url, author, 
+        likes: likes || 0,
+        user: user.id
+       })
+
+       const savedBlog = await blog.save()
+
+      // Add blog to user's blogs array and save user
+    user.blogs = user.blogs.concat(savedBlog.id)
+    await user.save()
+
+    response.status(201).json(savedBlog)
+
+  } catch (error) {
+    next(error)
+  }
+})
+  } catch (error) {
+    next(error)
+  }
+})
   
   //delete a blog by id
   blogRouter.delete('/:id', async (request, response, next) => {

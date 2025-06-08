@@ -39,7 +39,7 @@ app.post('/', async(request, response, next) => {
 
 //get all users
 app.get('/', async(request, response, next) => {
-    const result = await User.find({})
+    const result = await User.find({}).populate('blogs', {title:1, author:1, url:1, likes:1})
     response.json(result)
 })
 
