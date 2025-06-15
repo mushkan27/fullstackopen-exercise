@@ -73,24 +73,24 @@ describe('testing POST method', () => {
       url: 'http://newblog.com',
       likes: 10
     }
-  
+
     await api
       .post('/api/blogs')
       .set('Authorization', `Bearer ${authToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
-  
+
     const response = await api
       .get('/api/blogs')
       .set('Authorization', `Bearer ${authToken}`)  // <---- add token here
-  
+
     const titles = response.body.map(r => r.title)
-  
+
     assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
     assert(titles.includes(newBlog.title))
   })
-  
+
   test('if likes property is missing, it defaults to 0', async () => {
     const newBlogWithoutLikes = {
       title: 'Blog without likes',

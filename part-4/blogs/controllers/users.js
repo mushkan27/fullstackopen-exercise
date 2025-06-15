@@ -4,18 +4,18 @@ const bcrypt = require('bcrypt')
 
 //create a new user
 app.post('/', async(request, response, next) => {
-    const body = request.body
+  const body = request.body
 
   if (!body.username || !body.password) {
     return response.status(400).json({ error: 'username or password missing' })
   }
-  
+
   if (body.username.length < 3) {
-    return response.status(400).json({ error: 'username must be at least 3 characters long' });
+    return response.status(400).json({ error: 'username must be at least 3 characters long' })
   }
 
   if (body.password.length < 3) {
-    return response.status(400).json({ error: 'password must be at least 3 characters long' });
+    return response.status(400).json({ error: 'password must be at least 3 characters long' })
   }
 
   const saltRounds = 10
@@ -38,9 +38,9 @@ app.post('/', async(request, response, next) => {
 })
 
 //get all users
-app.get('/', async(request, response, next) => {
-    const result = await User.find({}).populate('blogs', {title:1, author:1, url:1, likes:1})
-    response.json(result)
+app.get('/', async(request, response) => {
+  const result = await User.find({}).populate('blogs', { title:1, author:1, url:1, likes:1 })
+  response.json(result)
 })
 
 module.exports = app
