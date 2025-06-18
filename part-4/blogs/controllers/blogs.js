@@ -2,6 +2,7 @@ const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user') // eslint-disable-line no-unused-vars
 const jwt = require('jsonwebtoken') // eslint-disable-line no-unused-vars
+const { userExtractor } =  require('./utils/middleware')
 
 
 //get all blogs
@@ -12,7 +13,7 @@ blogRouter.get('/', async(request, response) => {
 })
 
 // POST a new blog
-blogRouter.post('/', async (request, response, next) => {
+blogRouter.post('/', userExtractor, async (request, response, next) => {
   const { title, url, author, likes } = request.body
   const user = request.user
 
