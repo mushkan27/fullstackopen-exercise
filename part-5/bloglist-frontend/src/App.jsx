@@ -12,13 +12,15 @@ const App = () => {
   const [password, setPassword] = useState('')
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      const fetchedBlogs = await getAll()
-      setBlogs(fetchedBlogs)
+    if (user) {
+      const fetchBlogs = async () => {
+        const fetchedBlogs = await getAll()
+        setBlogs(fetchedBlogs)
+      }
+      fetchBlogs()
     }
-
-    fetchBlogs()
-  }, [])
+  }, [user])
+  
 
   const handleLogin = async (event) => {
     event.preventDefault()
