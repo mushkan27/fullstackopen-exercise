@@ -5,13 +5,24 @@ import LoginForm from './components/LoginForm'
 import { getAll, create, setToken } from './services/blogs'
 import { login } from './services/login'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [notification, setNotification] = useState({ message: null, type: null })
 
+
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type })
+    setTimeout(() => {
+      setNotification({ message: null, type: null })
+    }, 3000)
+  }
+
+  // Fetch blogs after login
   useEffect(() => {
     if (user) {
       const fetchBlogs = async () => {
@@ -24,7 +35,7 @@ const App = () => {
 
   //check local storage for logged in user
   useEffect(() => {
-    const loggedUserJSON = localStorage.getItem('loggedBlogappUser')
+    const loggedUserJSON = localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -44,29 +55,40 @@ const App = () => {
       setToken(loggedinUser.token)
       setUsername('')
       setPassword('')
+      showNotification(`Welcome ${loggedinUser.name}`)
     } catch (e) {
-      console.log('wrong credentials')
+      if (e.response && e.response.status === 401) {
+        showNotification('Wrong username or password', 'error')
+      } else {
+        showNotification('Login failed: server error or network issue', 'error')
+      }
     }
   }
 
   const handleLogout = () => {
     localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
+    showNotification('Logged out')
   }
 
   const createBlog = async (blogObject) => {
     try {
       const newBlog = await create(blogObject)
       setBlogs(blogs.concat(newBlog))
+      showNotification(`A new blog "${newBlog.title}" by ${newBlog.author} added`)
     } catch (error) {
-      console.error('Error creating blog:', error)
+      showNotification('Error creating blog', 'error')
     }
   }
+
+
+
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={notification.message} type={notification.type} />
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -81,9 +103,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={notification.message} type={notification.type} />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
 
-    <h2>create new</h2>
+      <h2>create new</h2>
       <BlogForm createBlog={createBlog} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
