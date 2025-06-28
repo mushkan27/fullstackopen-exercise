@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
-import { getAll } from './services/blogs'
+import { getAll, create, setToken } from './services/blogs'
 import { login } from './services/login'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -20,7 +21,17 @@ const App = () => {
       fetchBlogs()
     }
   }, [user])
-  
+
+  //check local storage for logged in user
+  useEffect(() => {
+    const loggedUserJSON = localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      setToken(user.token)
+    }
+  }, [])
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -28,11 +39,27 @@ const App = () => {
 
     try {
       const loggedinUser = await login({ username, password })
+      localStorage.setItem('loggedBlogAppUser', JSON.stringify(loggedinUser))
       setUser(loggedinUser)
+      setToken(loggedinUser.token)
       setUsername('')
       setPassword('')
-    } catch (exception) {
+    } catch (e) {
       console.log('wrong credentials')
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('loggedBlogAppUser')
+    setUser(null)
+  }
+
+  const createBlog = async (blogObject) => {
+    try {
+      const newBlog = await create(blogObject)
+      setBlogs(blogs.concat(newBlog))
+    } catch (error) {
+      console.error('Error creating blog:', error)
     }
   }
 
@@ -54,7 +81,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <p>{user.name} logged in</p>
+      <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+
+    <h2>create new</h2>
+      <BlogForm createBlog={createBlog} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
