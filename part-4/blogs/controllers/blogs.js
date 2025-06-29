@@ -2,13 +2,13 @@ const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user') // eslint-disable-line no-unused-vars
 const jwt = require('jsonwebtoken') // eslint-disable-line no-unused-vars
-const { userExtractor } =  require('../utils/middleware')
+const { userExtractor } = require('../utils/middleware')
 
 
 //get all blogs
-blogRouter.get('/', async(request, response) => {
+blogRouter.get('/', async (request, response) => {
   //using async-await
-  let result = await Blog.find({}).populate('user', { username:1, name:1 })
+  let result = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(result)
 })
 
@@ -61,18 +61,19 @@ blogRouter.delete('/:id', async (request, response, next) => {
 
 // UPDATE a blog by id (primarily updating likes)
 blogRouter.put('/:id', async (request, response, next) => {
-  const { title, url, author, likes } = request.body
+  const { title, url, author, likes, user } = request.body
 
-  const updatedData = { title, url, author, likes } // only update provided fields
+  const updatedData = { title, url, author, likes, user } // only update provided fields, exclude user
 
   try {
     const updatedBlog = await Blog.findByIdAndUpdate(
       request.params.id,
       updatedData,
       { new: true, runValidators: true }
-    )
+    ).populate('user', { username: 1, name: 1 })
 
     if (updatedBlog) {
+      // const populatedBlog = await updatedBlog.populate('user', { username: 1, name: 1 })
       response.json(updatedBlog)
     } else {
       response.status(404).json({ error: 'blog not found' })

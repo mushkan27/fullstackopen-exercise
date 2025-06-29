@@ -14,11 +14,11 @@ const Blog = ({ blog, onLike }) => {
 
   const handleLike = async () => {
     const updatedBlog = {
-      user: blog.user.id || blog.user,
       likes: blog.likes + 1,
       author: blog.author,
       title: blog.title,
-      url: blog.url
+      url: blog.url,
+      user: blog.user.id || blog.user
     }
 
     const returnedBlog = await update(blog.id, updatedBlog)
