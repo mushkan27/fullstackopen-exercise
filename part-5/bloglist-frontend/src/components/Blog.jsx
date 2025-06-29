@@ -1,8 +1,9 @@
-import { useState } from 'react'
-import { update } from '../services/blogs'
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { update } from '../services/blogs';
 
 const Blog = ({ blog, onLike, user, onDelete }) => {
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(false);
 
   const blogStyle = {
     paddingTop: 10,
@@ -10,7 +11,7 @@ const Blog = ({ blog, onLike, user, onDelete }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
-  }
+  };
 
   const handleLike = async () => {
     const updatedBlog = {
@@ -19,22 +20,22 @@ const Blog = ({ blog, onLike, user, onDelete }) => {
       title: blog.title,
       url: blog.url,
       user: blog.user.id || blog.user
-    }
+    };
 
-    const returnedBlog = await update(blog.id, updatedBlog)
-    onLike(returnedBlog)
-  }
+    const returnedBlog = await update(blog.id, updatedBlog);
+    onLike(returnedBlog);
+  };
 
   const handleDelete = () => {
     if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
-      onDelete(blog.id)
+      onDelete(blog.id);
     }
-  }
+  };
 
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title} {blog.author}
+        {blog.title} {blog.author};
         <button onClick={() => setShowDetails(!showDetails)}>
           {showDetails ? 'hide' : 'view'}
         </button>
@@ -53,7 +54,28 @@ const Blog = ({ blog, onLike, user, onDelete }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Blog
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      username: PropTypes.string,
+      name: PropTypes.string
+    })
+  }).isRequired,
+  onLike: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    username: PropTypes.string.isRequired
+  })
+};
+
+
+export default Blog;
