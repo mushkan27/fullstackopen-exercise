@@ -78,7 +78,7 @@ const App = () => {
       const newBlog = await create(blogObject)
       setBlogs(blogs.concat(newBlog))
       showNotification(`A new blog "${newBlog.title}" by ${newBlog.author} added`)
-      blogFormRef.current.toggleVisibility() 
+      blogFormRef.current.toggleVisibility()
     } catch (error) {
       showNotification('Error creating blog', 'error')
     }
@@ -87,7 +87,7 @@ const App = () => {
   const handleLike = (updatedBlog) => {
     setBlogs(blogs.map(b => b.id !== updatedBlog.id ? b : updatedBlog))
   }
-  
+
 
 
   if (user === null) {
@@ -116,9 +116,12 @@ const App = () => {
         <BlogForm createBlog={createBlog} />
       </Togglable>
 
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} onLike={handleLike} />
-      )}
+      {[...blogs]
+        .sort((a, b) => b.likes - a.likes)
+        .map(blog =>
+          <Blog key={blog.id} blog={blog} onLike={handleLike} />
+        )}
+
     </div>
   )
 }
