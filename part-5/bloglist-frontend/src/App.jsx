@@ -84,6 +84,11 @@ const App = () => {
     }
   }
 
+  const handleLike = (updatedBlog) => {
+    setBlogs(blogs.map(b => b.id !== updatedBlog.id ? b : updatedBlog))
+  }
+  
+
 
   if (user === null) {
     return (
@@ -112,7 +117,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} onLike={handleLike} />
       )}
     </div>
   )
