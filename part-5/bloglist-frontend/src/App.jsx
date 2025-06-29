@@ -78,6 +78,7 @@ const App = () => {
       const newBlog = await create(blogObject)
       setBlogs(blogs.concat(newBlog))
       showNotification(`A new blog "${newBlog.title}" by ${newBlog.author} added`)
+      blogFormRef.current.toggleVisibility() 
     } catch (error) {
       showNotification('Error creating blog', 'error')
     }
@@ -107,9 +108,9 @@ const App = () => {
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
 
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-      <h2>create new</h2>
         <BlogForm createBlog={createBlog} />
       </Togglable>
+
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
