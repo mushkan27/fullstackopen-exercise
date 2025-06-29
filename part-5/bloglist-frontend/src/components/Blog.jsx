@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { update } from '../services/blogs'
 
-const Blog = ({ blog, onLike }) => {
+const Blog = ({ blog, onLike, user, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false)
 
   const blogStyle = {
@@ -25,6 +25,12 @@ const Blog = ({ blog, onLike }) => {
     onLike(returnedBlog)
   }
 
+  const handleDelete = () => {
+    if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
+      onDelete(blog.id)
+    }
+  }
+
   return (
     <div style={blogStyle}>
       <div>
@@ -41,6 +47,9 @@ const Blog = ({ blog, onLike }) => {
             {blog.likes} likes <button onClick={handleLike}>like</button>
           </div>
           <div>{blog.user?.name}</div>
+          {user && blog.user && (blog.user.username === user.username) && (
+            <button onClick={handleDelete}>delete</button>
+          )}
         </div>
       )}
     </div>
