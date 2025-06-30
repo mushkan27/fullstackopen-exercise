@@ -60,7 +60,7 @@ const App = () => {
       showNotification(`Welcome ${loggedinUser.name}`);
     } catch (e) {
       if (e.response && e.response.status === 401) {
-        showNotification('Wrong username or password', 'error');
+        showNotification(e.response.data.error, 'error');
       } else {
         showNotification('Login failed: server error or network issue', 'error');
       }

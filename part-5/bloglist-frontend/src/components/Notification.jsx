@@ -6,7 +6,8 @@ const Notification = ({ message, type }) => {
     }
 
     return (
-        <div style={{
+        <div className={type === 'error' ? 'error' : 'notification'}
+         style={{
             border: '1px solid',
             padding: 10,
             marginBottom: 10,
