@@ -1,8 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getAll, createNew, updateAnecdote } from "./services/anecdotes"
+import { useDispatch } from "react-redux"
+import { showNotification } from "./reducers/notificationReducer"
+import Notification from "./components/Notification"
 
 const ReactQueryApp = () => {
 const queryClient = useQueryClient()
+const dispatch = useDispatch()
 
 const { data, isLoading, isError } = useQuery({
     queryKey: ['anecdotes'],
@@ -15,6 +19,10 @@ const newAnecdoteMutation = useMutation({
     onSuccess: (newAnecdote) => {
         const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+      dispatch(showNotification(`Anecdote added: "${newAnecdote.content}"`, 5))
+    },
+    onError: () => {
+        dispatch(showNotification('Anecdote must be at least 5 characters long', 5))
     }
 })
 
@@ -27,6 +35,7 @@ const voteMutation = useMutation({
           a.id === updatedAnecdote.id ? updatedAnecdote : a
         )
       )
+        dispatch(showNotification(`You voted: "${updatedAnecdote.content}"`, 5))
     }
 })
 
@@ -56,6 +65,8 @@ if(isError){
 return (
     <div>
         <h1>Anecdotes</h1> 
+
+        <Notification /> <br />
 
     <form onSubmit={handleSubmit}>
         <input name="anecdote" placeholder="Write your anecdote"/>
