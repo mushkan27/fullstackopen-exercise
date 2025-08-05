@@ -1,25 +1,4 @@
-import { useState } from 'react';
-import useResource from './hooks/useResource';
-
-// Custom hook for form inputs
-const useField = (type) => {
-  const [value, setValue] = useState('');
-
-  const onChange = (event) => {
-    setValue(event.target.value);
-  };
-
-  const reset = () => {
-    setValue('');
-  };
-
-  return {
-    type,
-    value,
-    onChange,
-    reset
-  };
-};
+import { useResource, useField } from './hooks/useResource';
 
 const App = () => {
   const content = useField('text');

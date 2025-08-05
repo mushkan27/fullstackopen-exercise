@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const useResource = (baseUrl) => {
+export const useResource = (baseUrl) => {
   const [resources, setResources] = useState([]);
   let token = null;
 
@@ -43,4 +43,23 @@ const useResource = (baseUrl) => {
   return [resources, service];
 };
 
-export default useResource;
+// Custom hook for form inputs
+export const useField = (type) => {
+  const [value, setValue] = useState('');
+
+  const onChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  const reset = () => {
+    setValue('');
+  };
+
+  return {
+    type,
+    value,
+    onChange,
+    reset
+  };
+};
+
