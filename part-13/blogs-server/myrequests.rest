@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/blogs/
+Content-Type: application/json
+
+{
+     "author": "Test author",
+    "title": "On let vs const",
+    "url": "https://overreacted.io/let-vs-const/",
+    "likes": 10
+    
+}

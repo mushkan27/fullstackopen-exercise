@@ -4,6 +4,7 @@ const { Sequelize, Model, DataTypes } = require('sequelize')
 
 const express = require('express')
 const app = express()
+app.use(express.json())
 
 const sequelize = new Sequelize(process.env.DB_URL, {
   dialectOptions: {
@@ -47,6 +48,15 @@ Blog.init({
 app.get('/api/blogs', async(req, res) => {
     const blogs = await Blog.findAll()
     res.json(blogs)
+})
+
+app.post('/api/blogs', async(req,res) => {
+    try {
+        const blog = await Blog.create(req.body)
+        return res.json(blog)
+    } catch (error) {
+        return res.status(400).json({ error })
+    }
 })
 
 const PORT = process.env.PORT || 3001
