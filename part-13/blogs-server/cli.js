@@ -1,4 +1,5 @@
-
+const { connectToDatabase } = require('./utils/db')
+const { PORT } = require('./utils/config')
 
 const express = require('express')
 const app = express()
@@ -10,7 +11,11 @@ app.use('/api/blogs', blogsRouter)
 
 
 
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
+const start = async () => {
+  await connectToDatabase()
+  app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
-})
+  })
+}
+
+start()
