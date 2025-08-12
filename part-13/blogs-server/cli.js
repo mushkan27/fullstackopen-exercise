@@ -1,3 +1,4 @@
+require('express-async-errors')
 const { connectToDatabase } = require('./utils/db')
 const { PORT } = require('./utils/config')
 
@@ -8,6 +9,17 @@ app.use(express.json())
 
 app.use('/api/blogs', blogsRouter)
 
+//Centralized error handling middleware (must be after all routes)
+app.use((err, req, res, next) => {
+  console.error(err.message)
+
+  //Example:handle SequelizeValidationError
+  if(err.name === 'SequelizeValidationError'){
+    return res.status(400).json({error:err.errors.map(e => e.message).join(', ')})
+  }
+
+  res.status(err.status || 500).json({error:err.message || 'Something went wrong'})
+})
 
 
 
