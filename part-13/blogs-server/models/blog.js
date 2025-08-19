@@ -33,6 +33,6 @@ const { sequelize } = require('../utils/db')
     modelName: 'blog'
   })
 
-  Blog.sync()
+  // Blog.sync()
 
   module.exports = Blog
