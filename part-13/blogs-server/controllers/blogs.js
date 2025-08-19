@@ -1,64 +1,84 @@
-const app = require('express').Router()
-const { Blog } = require('../models/index')
+const router = require('express').Router()
+const jwt = require('jsonwebtoken')
+const { Blog, User } = require('../models')
+const { SECRET } = require('../utils/config')
 
-
-app.get('/', async(req, res) => {
-    const blogs = await Blog.findAll()
-    res.json(blogs)
-})
-
-app.post('/', async(req,res) => {
-    // try {
-        const blog = await Blog.create(req.body)
-        return res.json(blog)
-    // } catch (error) {
-    //     return res.status(400).json({ error })
-    // }
-})
-
-app.delete('/:id', async (req, res) => {
-  const id = req.params.id
-
-  // try {
-    const blog = await Blog.findByPk(id)
-
-    if (!blog) {
-      return res.status(404).json({ error: 'Blog not found' })
-    }
-
-    blog.deleted = true // or blog.isDeleted = true
-    await blog.save()
-
-    res.status(204).end()
-  // } catch (error) {
-  //   console.error(error)
-  //   res.status(500).json({ error: 'Something went wrong' })
-  // }
-})
-
-app.put('/:id', async (req, res) => {
-    const id = req.params.id;
-    const { likes } = req.body;
-  
-    if (likes === undefined) {
-      return res.status(400).json({ error: "Missing 'likes' field in request body" });
-    }
-  
-    // try {
-      const blog = await Blog.findByPk(id);
-      if (!blog) {
-        return res.status(404).json({ error: 'Blog not found' });
+// middleware to extract user from token
+const tokenExtractor = async (req, res, next) => {
+  const authorization = req.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    try {
+      const decodedToken = jwt.verify(authorization.substring(7), SECRET)
+      if (!decodedToken.id) {
+        return res.status(401).json({ error: 'token invalid' })
       }
-  
-      blog.likes = likes;
-      await blog.save();
-  
-      res.json(blog);
-    // } catch (error) {
-    //   console.error(error);
-    //   res.status(500).json({ error: 'Failed to update likes' });
-    // }
-  });
-  
+      req.user = await User.findByPk(decodedToken.id)
+    } catch (err) {
+      return res.status(401).json({ error: 'token invalid' })
+    }
+  } else {
+    return res.status(401).json({ error: 'token missing' })
+  }
+  next()
+}
 
-module.exports = app
+// GET all blogs
+router.get('/', async (req, res) => {
+  const blogs = await Blog.findAll({
+    include: {
+      model: User,
+      attributes: ['id', 'username', 'name']
+    }
+  })
+  res.json(blogs)
+})
+
+// POST create a new blog (only logged-in users)
+router.post('/', tokenExtractor, async (req, res) => {
+  const body = req.body
+
+  const blog = await Blog.create({
+    ...body,
+    userId: req.user.id
+  })
+
+  res.json(blog)
+})
+
+// DELETE blog (only owner can delete)
+router.delete('/:id', tokenExtractor, async (req, res) => {
+  const blog = await Blog.findByPk(req.params.id)
+
+  if (!blog) {
+    return res.status(404).json({ error: 'Blog not found' })
+  }
+
+  // check if blog belongs to logged-in user
+  if (blog.userId !== req.user.id) {
+    return res.status(403).json({ error: 'Not authorized to delete this blog' })
+  }
+
+  await blog.destroy()
+  res.status(204).end()
+})
+
+// PUT update blog likes
+router.put('/:id', async (req, res) => {
+  const id = req.params.id
+  const { likes } = req.body
+
+  if (likes === undefined) {
+    return res.status(400).json({ error: "Missing 'likes' field in request body" })
+  }
+
+  const blog = await Blog.findByPk(id)
+  if (!blog) {
+    return res.status(404).json({ error: 'Blog not found' })
+  }
+
+  blog.likes = likes
+  await blog.save()
+  res.json(blog)
+})
+
+module.exports = router
