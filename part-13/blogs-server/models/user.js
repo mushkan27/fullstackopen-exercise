@@ -14,7 +14,10 @@ const { sequelize } = require('../utils/db')
     username: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            isEmail: true, // sequelize to check if the username is a valid email
+        }
     },
     name: {
         type: DataTypes.STRING,

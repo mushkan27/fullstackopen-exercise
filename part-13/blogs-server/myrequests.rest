@@ -29,7 +29,7 @@ Content-Type: application/json
 
 {
     "name": "Raju",
-    "username": "raju123"
+    "username": "raju@example.com"
 }
 ###
 PUT http://localhost:3001/api/users/muskan123
