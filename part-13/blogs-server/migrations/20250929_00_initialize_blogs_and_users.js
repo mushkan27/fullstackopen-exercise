@@ -23,6 +23,10 @@ module.exports = {
         type: DataTypes.INTEGER,
         defaultValue: 0
       },
+      year: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -56,6 +60,11 @@ module.exports = {
           defaultValue: DataTypes.NOW
         }
       })
+       // Add DB-level check constraint for year
+    await queryInterface.sequelize.query(`
+      ALTER TABLE blogs
+      ADD CONSTRAINT year_range CHECK (year >= 1991 AND year <= EXTRACT(YEAR FROM CURRENT_DATE));
+    `)
   },
   
   down: async ({ context: queryInterface }) => {
