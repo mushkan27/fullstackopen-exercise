@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const { User, Blog } = require('../models')
+const { tokenExtractor } = require('../utils/middleware')
 
 router.get('/', async (req, res) => {
     const users = await User.findAll({
@@ -30,7 +31,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.put('/:username', async (req, res) => {
+router.put('/:username', tokenExtractor, async (req, res) => {
    const { username } = req.params
    const { newUsername, newName } = req.body
 
