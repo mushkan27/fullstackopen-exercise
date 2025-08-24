@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize')
+const { DataTypes, Sequelize } = require('sequelize')
 
 module.exports = {
   up: async ({ context: queryInterface }) => {
@@ -24,6 +24,16 @@ module.exports = {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
+      },
+      created_at: {          
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn('NOW'),
+      },
+      updated_at: {         
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn('NOW'),
       },
     })
   },

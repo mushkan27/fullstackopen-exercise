@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im11c2thbkBleGFtcGxlLmNvbSIsImlkIjoxLCJpYXQiOjE3NTYwMDU2MDh9.fq-3UX1smkDhk9UWn8M8qRx5gI7M5tIKzjkgpGS148g
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhanVAZXhhbXBsZS5jb20iLCJpZCI6MSwiaWF0IjoxNzU2MDMwNTM5fQ.LEvgz2Z8Fcz8bd2x-bMdpDRYWGTwVTIGv60x7SZpnR4
 
 {
-  "title": "Test blog second",
-  "author": "Muskan",
+  "title": "Test blog first",
+  "author": "Raju",
   "url": "http://example.com",
   "likes": 0,
   "year": 2013
@@ -41,17 +41,25 @@ Content-Type: application/json
     "name": "Muskan Sharma"
 }
 ###
-GET http://localhost:3001/api/users/
+GET http://localhost:3001/api/users/1
 ###
 POST http://localhost:3001/api/login
 Content-Type: application/json
 
 {
-    "username": "muskan@example.com",
+    "username": "raju@example.com",
     "password": "secret"
 }
 ###
 DELETE http://localhost:3001/api/blogs/3
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhanVAZXhhbXBsZS5jb20iLCJpZCI6MywiaWF0IjoxNzU1NjIwMzkzfQ.-C6m1htya47702snVv1yrDL2FYLEIYlMhQ3Bbv_VQ88
+###
+POST http://localhost:3001/api/readinglists/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im11c2thbkBleGFtcGxlLmNvbSIsImlkIjoxLCJpYXQiOjE3NTYwMDU2MDh9.fq-3UX1smkDhk9UWn8M8qRx5gI7M5tIKzjkgpGS148g
 
+{
+   "userId": 1,
+  "blogId": 2
+}
 

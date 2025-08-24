@@ -23,13 +23,27 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-    const user = await User.findByPk(req.params.id)
-    if (user) {
-        res.json(user)
-    } else {
-        res.status(404).json({error: 'User not found'})
+    try {
+      const user = await User.findByPk(req.params.id, {
+        include: {
+          model: Blog,
+          as: 'readings',
+          attributes: ['id', 'url', 'title', 'author', 'likes', 'year'],
+          through: { attributes: [] }, // hide join table data
+        },
+      });
+  
+      if (!user) return res.status(404).json({ error: 'User not found' });
+  
+      res.json({
+        name: user.name,
+        username: user.username,
+        readings: user.readings,
+      });
+    } catch (err) {
+      res.status(500).json({ error: 'Something went wrong' });
     }
-})
+  });
 
 router.put('/:username', tokenExtractor, async (req, res) => {
    const { username } = req.params
