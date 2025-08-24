@@ -62,4 +62,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im11c
    "userId": 1,
   "blogId": 2
 }
+###
+PUT http://localhost:3001/api/readinglists/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im11c2thbkBleGFtcGxlLmNvbSIsImlkIjoxLCJpYXQiOjE3NTYwMDU2MDh9.fq-3UX1smkDhk9UWn8M8qRx5gI7M5tIKzjkgpGS148g
+
+{
+  "read": true
+}
 

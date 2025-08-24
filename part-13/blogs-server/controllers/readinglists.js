@@ -31,6 +31,12 @@ router.post('/', tokenExtractor, async (req, res) => {
 //Get single user with reading list + join table info
 router.get('/users/:id', async (req, res) => {
   try {
+    const { read } = req.query // read = 'true' | 'false' | undefined
+
+    const readingListFilter = {}
+    if (read === 'true') readingListFilter.read = true
+    else if (read === 'false') readingListFilter.read = false
+
     const user = await User.findByPk(req.params.id, {
       attributes: ['id', 'name', 'username'],
       include: [
@@ -40,7 +46,9 @@ router.get('/users/:id', async (req, res) => {
           attributes: ['id', 'url', 'title', 'author', 'likes', 'year'],
           through: {
             model: ReadingList,
-            attributes: ['id', 'read'] // this pulls the join table
+            attributes: ['id', 'read'], // this pulls the join table
+            where: Object.keys(readingListFilter).length ? readingListFilter : undefined
+
           }
         }
       ]
@@ -56,5 +64,33 @@ router.get('/users/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' })
   }
 })
+
+router.put('/:id', tokenExtractor, async (req, res) => {
+  try {
+    const { read } = req.body
+    const readingListId = req.params.id
+    const userId = req.user.id // <-- use req.user here
+
+    const readingEntry = await ReadingList.findByPk(readingListId)
+
+    if (!readingEntry) {
+      return res.status(404).json({ error: 'Reading list entry not found' })
+    }
+
+    if (readingEntry.userId !== userId) {
+      return res.status(403).json({ error: 'Not authorized' })
+    }
+
+    readingEntry.read = read
+    await readingEntry.save()
+
+    res.json(readingEntry)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
+
 
 module.exports = router
