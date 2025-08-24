@@ -1,6 +1,7 @@
+require('dotenv').config()
 const jwt = require('jsonwebtoken')
-const { SECRET } = require('../utils/config')
-
+const { SECRET } = require('./config')
+const { User } = require('../models/index')
 
 // middleware to extract user from token
 const tokenExtractor = async (req, res, next) => {

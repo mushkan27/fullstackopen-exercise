@@ -2,6 +2,35 @@ const { DataTypes } = require('sequelize')
 
 module.exports = {
   up: async ({ context: queryInterface }) => {
+    // Create users first
+    await queryInterface.createTable('users', {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      username: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
+      }
+    })
+
+    // Then blogs (can reference users)
     await queryInterface.createTable('blogs', {
       id: {
         type: DataTypes.INTEGER,
@@ -30,45 +59,20 @@ module.exports = {
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: { model: 'users', key: 'id' }
+        references: { model: 'users', key: 'id' },
+        onDelete: 'CASCADE'
       }
     })
 
-    await queryInterface.createTable('users', {
-        id: {
-          type: DataTypes.INTEGER,
-          primaryKey: true,
-          autoIncrement: true
-        },
-        username: {
-          type: DataTypes.STRING,
-          unique: true,
-          allowNull: false
-        },
-        name: {
-          type: DataTypes.STRING,
-          allowNull: false
-        },
-        created_at: {
-          type: DataTypes.DATE,
-          allowNull: false,
-          defaultValue: DataTypes.NOW
-        },
-        updated_at: {
-          type: DataTypes.DATE,
-          allowNull: false,
-          defaultValue: DataTypes.NOW
-        }
-      })
-       // Add DB-level check constraint for year
+    // Constraint for year
     await queryInterface.sequelize.query(`
       ALTER TABLE blogs
       ADD CONSTRAINT year_range CHECK (year >= 1991 AND year <= EXTRACT(YEAR FROM CURRENT_DATE));
     `)
   },
-  
+
   down: async ({ context: queryInterface }) => {
     await queryInterface.dropTable('blogs')
     await queryInterface.dropTable('users')
-  },
+  }
 }

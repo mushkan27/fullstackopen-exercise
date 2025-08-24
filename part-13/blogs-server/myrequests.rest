@@ -1,13 +1,13 @@
 POST http://localhost:3001/api/blogs/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im11c2thbkBleGFtcGxlLmNvbSIsImlkIjoyLCJpYXQiOjE3NTU3OTA5NTF9.rGwxVLMVbpQsdKx2jPNg7N5QHJ2mBfQZCTSR_UEdWx8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im11c2thbkBleGFtcGxlLmNvbSIsImlkIjoxLCJpYXQiOjE3NTYwMDU2MDh9.fq-3UX1smkDhk9UWn8M8qRx5gI7M5tIKzjkgpGS148g
 
 {
-  "title": "Hey blog",
+  "title": "Test blog second",
   "author": "Muskan",
   "url": "http://example.com",
   "likes": 0,
-  "year": 2012
+  "year": 2013
 }
 ###
 PUT http://localhost:3001/api/blogs/1
