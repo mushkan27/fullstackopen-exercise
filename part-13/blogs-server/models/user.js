@@ -22,12 +22,19 @@ const { sequelize } = require('../utils/db')
     name: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    disabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     sequelize,
     underscored: true,
     timestamps: true,
-    modelName: 'user'
+    modelName: 'user',
+    defaultScope: { where: { disabled: false } }, // ignore disabled users by default
+  scopes: { disabled: { where: { disabled: true } } }
   })
 
 //   User.sync()
