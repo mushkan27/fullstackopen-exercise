@@ -1,4 +1,4 @@
-type Result = {
+export type Result = {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -6,22 +6,22 @@ type Result = {
   ratingDescription: string;
   target: number;
   average: number;
-}
+};
 
-const calculateExercises = (dailyHours: number[], target:number): Result => {
-    let periodLength = dailyHours.length;
-    let trainingDays = dailyHours.filter(h => h>0).length;
+export const calculateExercises = (dailyHours: number[], target:number): Result => {
+    const periodLength = dailyHours.length;
+    const trainingDays = dailyHours.filter(h => h>0).length;
     //success
-    let average = dailyHours.reduce((acc, curVal) => acc + curVal, 0)/periodLength;
-    const success = (average >= target)
+    const average = dailyHours.reduce((acc, curVal) => acc + curVal, 0)/periodLength;
+    const success = (average >= target);
 
     //rating
-    let rating = 1
+    let rating = 1;
     let ratingDescription = `you need to improve`;
 
     if(average>=target){
         rating = 3;
-        ratingDescription = `great job, target meet`
+        ratingDescription = `great job, target meet`;
     }else if (average >= target * 0.75) {
     rating = 2;
     ratingDescription = "not too bad but could be better";
@@ -35,8 +35,8 @@ const calculateExercises = (dailyHours: number[], target:number): Result => {
     ratingDescription,
     target,
     average
-  }
-}
+  };
+};
 
 // console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
 try {
