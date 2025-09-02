@@ -1,5 +1,5 @@
 // utils.ts
-import { NewPatient } from './types';
+import { NewPatient, Gender } from './types';
 
 // helper type checks
 const isString = (text: unknown): text is string => {
@@ -10,8 +10,8 @@ const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
 };
 
-const isGender = (param: string): boolean => {
-  return ['male', 'female', 'other'].includes(param.toLowerCase());
+const isGender = (param: unknown): param is Gender => {
+  return typeof param === "string" && Object.values(Gender).map(v => v.toString()).includes(param);
 };
 
 // parsers
@@ -29,7 +29,7 @@ const parseDateOfBirth = (date: unknown): string => {
   return date;
 };
 
-const parseGender = (gender: unknown): string => {
+const parseGender = (gender: unknown): Gender => {
   if (!isString(gender) || !isGender(gender)) {
     throw new Error('Invalid or missing gender');
   }
