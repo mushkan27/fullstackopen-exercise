@@ -15,3 +15,4 @@ export interface Patient {
 
 // Type for frontend-safe Patient (exclude ssn)
 export type NonSensitivePatient = Omit<Patient, 'ssn'>;
+export type NewPatient = Omit<Patient, 'id'>;
