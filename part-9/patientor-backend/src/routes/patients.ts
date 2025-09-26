@@ -15,7 +15,7 @@ router.get('/', (_req, res) => {
 router.post('/', (_req, res) => {
    try {
     const newPatient = toNewPatient(_req.body);
-    const patient: Patient = { id: uuid(), ...newPatient };
+    const patient: Patient = { id: uuid(), ...newPatient, entries:[]};
 
     patientsData.push(patient);
     res.status(201).json(patient);
